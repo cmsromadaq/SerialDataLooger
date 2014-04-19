@@ -52,6 +52,7 @@ class SerialData(object):
                 continue
             try:
                 last_received=''
+                print "Got data: "+raw_line.strip()
                 return raw_line.strip()
             except ValueError:
                 continue
@@ -66,4 +67,4 @@ class SerialData(object):
 if __name__=='__main__':
     s = SerialData('/tmp/COM0')
     while True:
-        print s.next()
+        s.next()
