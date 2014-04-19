@@ -16,7 +16,7 @@ def receiving(ser):
             last_received, buffer = buffer.split('\n')[-2:]
 #            print "lastline "+last_received+" BUFFER "+buffer
         else:
-            buffer += ser.read(9999)  # this will block until one more char or timeout
+            buffer += ser.read(1)  # this will block until one more char or timeout
         buffer += ser.read(ser.inWaiting()) # get remaining buffered chars
 
 
@@ -50,7 +50,7 @@ class SerialData(object):
         while True:
             raw_line = last_received
             if raw_line == '':
-                time.sleep(.005)
+                time.sleep(.01)
                 continue
             try:
                 last_received=''
