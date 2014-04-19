@@ -29,20 +29,22 @@ class SerialData(object):
                 bytesize=serial.EIGHTBITS,
                 parity=serial.PARITY_NONE,
                 stopbits=serial.STOPBITS_ONE,
-                timeout=0.1,
+                timeout=1,
                 xonxoff=0,
                 rtscts=0,
                 interCharTimeout=None
                 )
         except serial.serialutil.SerialException:
             #no serial connection
+            print 'not possible to establish connection with '+port
             self.ser = None
         else:
+            print 'Starting connection with '+port
             Thread(target=receiving, args=(self.ser,)).start()
 
     def next(self):
         global last_received
-        if not self.ser:
+        if self.ser == None:
             return -9999 #return anything so we can test when Arduino isn't connected
         #return a float value or try a few times until we get one
         while True:
@@ -65,6 +67,11 @@ class SerialData(object):
             
 
 if __name__=='__main__':
-    s = SerialData('/tmp/COM0')
+    port='/tmp/COM0'
+    s = SerialData(port)
     while True:
-        s.next()
+        data=s.next()
+        if data==-9999:
+            print 'no connection with '+port+". Quit"
+            exit(-1)
+
