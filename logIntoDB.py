@@ -17,10 +17,19 @@ except:
       print "Failed to connect on",device
 
 while True: #the infinite loop
-    sleep(10)
+    sleep(1)
     try:
         data = serial.next()  #read the data from the arduino (lines are split by \n)
-        pieces = data.split("\t")  #split the data by the tab
+        pieces = data.split(" ")  #split the data by the tab
+        if len(pieces)<2:
+              continue
+        else:
+              sensor=pieces[0]
+              measurements={}
+              for meas in pieces[1:]:
+                    meas_type=meas.split("=")[0]
+                    meas_value=meas.split("=")[0]
+                    measurements[sensor+'_'+meas_type]=meas_value
     #Here we are going to insert the data into the Database
         try:
             cursor.execute("INSERT INTO weatherData (humidity,tempC) VALUES (%s,%s)", (pieces[0],pieces[1]))
