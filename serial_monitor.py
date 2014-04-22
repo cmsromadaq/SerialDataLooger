@@ -6,6 +6,9 @@ http://stackoverflow.com/questions/1093598/pyserial-how-to-read-last-line-sent-f
 from threading import Thread
 import time
 import serial
+import datetime
+import logging
+
 
 last_received = ''
 def receiving(ser):
@@ -14,7 +17,6 @@ def receiving(ser):
     while True:
         if '\n' in buffer:
             last_received, buffer = buffer.split('\n')[-2:]
-#            print "lastline "+last_received+" BUFFER "+buffer
         else:
             buffer += ser.read(1)  # this will block until one more char or timeout
         buffer += ser.read(ser.inWaiting()) # get remaining buffered chars
@@ -36,10 +38,10 @@ class SerialData(object):
                 )
         except serial.serialutil.SerialException:
             #no serial connection
-            print 'not possible to establish connection with '+port
+            logging.warning('not possible to establish connection with '+port)
             self.ser = None
         else:
-            print 'Starting connection with '+port
+            logging.info('Starting connection with '+port)
             Thread(target=receiving, args=(self.ser,)).start()
 
     def next(self):
@@ -54,7 +56,6 @@ class SerialData(object):
                 continue
             try:
                 last_received=''
-                print "Got data: "+raw_line.strip()
                 return raw_line.strip()
             except ValueError:
                 continue
@@ -67,10 +68,12 @@ class SerialData(object):
             
 
 if __name__=='__main__':
-    port='/tmp/COM0'
+    port='/dev/ttyACM0'
+    logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S',filename='serial_monitor.log',level=logging.DEBUG)
     s = SerialData(port)
     while True:
         data=s.next()
+        logging.info(data)
         if data==-9999:
             print 'no connection with '+port+". Quit"
             exit(-1)
