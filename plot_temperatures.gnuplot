@@ -1,0 +1,8 @@
+set xdata time
+set timefmt "%Y-%m-%d %H:%M:%S"
+set format x "%H:%M"
+set termoption dash
+set yrange [20:26]
+set terminal png
+set output "/tmp/temperatures.png"
+plot "/tmp/temperatures" using 1:3 w l lt 1 lc rgb "green" lw 3 t "SHT75",  "/tmp/temperatures" using 1:4 w l lt 1 lc rgb "blue" lw 3 t "LM35"

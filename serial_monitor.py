@@ -65,11 +65,17 @@ class SerialData(object):
         if self.ser:
             self.ser.close()
             
-            
+
 
 if __name__=='__main__':
-    port='/dev/ttyACM0'
-    logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S',filename='serial_monitor.log',level=logging.DEBUG)
+    from optparse import OptionParser
+    parser = OptionParser()
+    parser.add_option("-d","--dev")
+    parser.add_option("-l","--log")
+    (options,args)=parser.parse_args()
+
+    port=options.dev
+    logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S',filename=options.log,level=logging.DEBUG)
     s = SerialData(port)
     while True:
         data=s.next()
