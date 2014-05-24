@@ -1,7 +1,7 @@
 import serial
 from time import sleep
 
-port = "/tmp/COM0"
+port = "/dev/ttyACM2"
 ser = serial.Serial(port, 9600, timeout=0)
 
 while True:
