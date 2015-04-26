@@ -36,19 +36,19 @@ class LogDB:
     def __init__(self):
         self.db=DbInterface()
 
-    def insertEntry(self,logEntry,nsensors):
+    def insertEntry(self,logEntry,nsensors=3):
+
         if (nsensors<1 or nsensors>5):
+            print 'invalid number of sensors'
             return
+
         envEntry=EnvironmentDbClass()
         envEntry['env_readout_id']=None
         envEntry['env_timestamp']=None
-        items=logEntry.split()
 
-        if (len(items)!=nsensors+2): #SHT75 also has humidity & dew point
-            return
-        values=dict(a.split('=') for a in items if (len(a.split('='))==2))
-
-        if (len(values)!=nsensors+2):
+        values=dict(a.split('=') for a in logEntry.split() if (len(a.split('='))==2))
+        if (len(values)<nsensors):
+            print 'invalid entry for db'
             return
 
         for key in values.keys():
@@ -114,9 +114,12 @@ if __name__=='__main__':
     parser = OptionParser()
     parser.add_option("-d","--dev")
     parser.add_option("-n","--sensors",default=3)
+    parser.add_option("-f","--dbfrequency",default=6)
     parser.add_option("-l","--log")
     parser.add_option("--db",default=False,action="store_true")
     (options,args)=parser.parse_args()
+
+    print "Starting monitoring for "+str(options.sensors)+" temp sensors on "+str(options.dev)+ ".DB Writing is "+str(options.db)+ " every "+str(options.dbfrequency) 
 
     port=options.dev
     logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S',filename=options.log,level=logging.DEBUG)
@@ -124,13 +127,16 @@ if __name__=='__main__':
     if options.db:
         db=LogDB()
 
+    count=1
     while True:
         data=s.next()
         logging.info(data)
+        count=count+1
         if data==-9999:
             print 'no connection with '+port+". Quit"
             exit(-1)
-        if options.db:
-            db.insertEntry(data,options.sensors)
+        if options.db and (count % int(options.dbfrequency)) == 1:
+            db.insertEntry(data,int(options.sensors))
+            count=1
 
             
