@@ -1,6 +1,7 @@
 import serial
 import time
 import logging
+import os
 
 from optparse import OptionParser
 parser = OptionParser()
@@ -25,6 +26,7 @@ else:
     logging.info('Starting connection with '+port)
 
 x = ser.write('COM,%d\r\n'%timeInterval) 
+alertCounter=99999
 while True:
 #    time.sleep(10)
 #    for c in commands.keys():
@@ -34,8 +36,17 @@ while True:
         #time.sleep(1)
 #    while ser.inWaiting() > 0:
     out += ser.readline()
+    alertCounter=alertCounter+1
 
     if out != '':
+        if (len(out.rstrip().lstrip('0,'))!=11):
+            continue
         logging.info(out.rstrip().lstrip('0,'))
+        if float(out.rstrip().lstrip('0,'))>1E-3 and alertCounter>4800:
+            print "SEND ALARM!"
+            os.system("echo \"PRESSURE @ "+out.rstrip().lstrip('0,')+"\" | mutt -s \"ALERT FROM TPG361\" paolo.meridiani@roma1.infn.it")
+            os.system("echo \"PRESSURE @ "+out.rstrip().lstrip('0,')+"\" | mutt -s \"ALERT FROM TPG361\" francesco.santanastasio@roma1.infn.it")
+            os.system("echo \"PRESSURE @ "+out.rstrip().lstrip('0,')+"\" | mutt -s \"ALERT FROM TPG361\" badder.marzocchi@cern.ch")
+            alertCounter=0 #send email once every 8h if problem persist
 
 ser.close()
