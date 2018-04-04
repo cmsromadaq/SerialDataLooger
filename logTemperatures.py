@@ -67,7 +67,8 @@ class LogDB:
 class SerialData(object):
     def __init__(self, port='/dev/ttyUSB0', baudrate=9600, init=50):
         try:
-            self.ser = ser = serial.Serial(
+            print "Starting connection with "+port
+            self.ser =  serial.Serial(
                 port,
                 baudrate,
                 bytesize=serial.EIGHTBITS,
@@ -76,7 +77,7 @@ class SerialData(object):
                 timeout=1,
                 xonxoff=0,
                 rtscts=0,
-                interCharTimeout=None
+#                interCharTimeout=None
                 )
         except serial.serialutil.SerialException:
             #no serial connection
@@ -119,7 +120,7 @@ if __name__=='__main__':
     parser.add_option("--db",default=False,action="store_true")
     (options,args)=parser.parse_args()
 
-    print "Starting monitoring for "+str(options.sensors)+" temp sensors on "+str(options.dev)+ ".DB Writing is "+str(options.db)+ " every "+str(options.dbfrequency) 
+    print "Starting monitoring for "+str(options.sensors)+" temp sensors on "+str(options.dev)+ ". DB Writing is "+str(options.db)+ " every "+str(options.dbfrequency) 
 
     port=options.dev
     logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S',filename=options.log,level=logging.DEBUG)

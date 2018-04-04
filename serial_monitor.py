@@ -23,7 +23,7 @@ def receiving(ser):
 
 
 class SerialData(object):
-    def __init__(self, port='/dev/ttyUSB0', baudrate=9600, init=50):
+    def __init__(self, port="/dev/ttyACM0", baudrate=9600, init=50):
         try:
             self.ser = ser = serial.Serial(
                 port,
