@@ -62,7 +62,7 @@ array_steps = array('f',list_steps)
 array_values = array('f',list_values)
 
 ## Book Canvas
-c1 = ROOT.TCanvas("test","test",600,600)
+c1 = ROOT.TCanvas()
 c1.SetGridx()
 c1.SetGridy()
 

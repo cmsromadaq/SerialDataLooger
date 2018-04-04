@@ -1,15 +1,19 @@
 #!/usr/bin/gnuplot
 
 set xdata time
-set timefmt "%b %d %H:%M:%S"
-set format x "%d %H"
-#set termoption dash
-set yrange [17:19]
+set timefmt "%Y-%m-%d %H:%M:%S"
+set format x "%d/%m %H:%M"
+set format y "%3.1E"
+set termoption dash
+set yrange [10:30]
 set terminal png
+set grid
+
+set xtics 21600
 
 #Plot absolute temp
-set output "/tmp/temp_arduino.png"
-plot "/tmp/temp_arduino.log" using 1:3 with p t "T1", "/tmp/temp_arduino.log" using 1:4 w p t "T2", "/tmp/temp_arduino.log" using 1:5 w p t "T3"
+set output "/home/cmsdaq/public_html/temp.png"
+plot "<sed -e 's%T1=%%g' /home/cmsdaq/data/PTU/temp.txt" using 1:3 with p t "temp"
 
 #Plot relative differences
 #set output "/var/www/TEMP/temperatures_diff.png"
